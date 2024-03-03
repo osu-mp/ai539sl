@@ -6,119 +6,19 @@ Concentration Inequalities
 
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 from scipy.stats import chi2
 
 DEBUG = True
-NUM_SIMULATIONS = 10000
-MIN_N = 1
-MAX_N = 4
-# plot_dir = 'plots'
-# os.makedirs(plot_dir, exist_ok=True)
-plot_fname = 'hw4.png'
+plot_dir = 'plots'
+os.makedirs(plot_dir, exist_ok=True)
 
 # various matplot styles; the final is a custom dash pattern (only used if n-range >= 5)
 line_styles = ['-', '--', '-.', ':', (0, (3, 5, 1, 5, 1, 5))]
 
-
-
-def markov(x, n):
-    return n / x
-
-def chebyshev(x, n):
-    #y_values = n / x **2
-    return n / (x ** 2)
-
-def simulate(n, count=NUM_SIMULATIONS):
-    """
-    Simulate the given number of times:
-    sum(X^2_i) for i = 1 to n
-        each X_i is normal from 0 to 1
-    :param n:
-    :param count:
-    :return:
-    """
-    x_s = np.random.uniform(0, 1, (count, n))
-    x_s_sq = x_s ** 2
-    sums = np.sum(x_s_sq, axis=1)
-    if DEBUG:
-        print(f"Simulating with {n=}, {count=}")
-        print(f"{x_s=}\n{x_s_sq=}\n{sums=}")
-    return sums
-
-def chi_square(n, count=NUM_SIMULATIONS):
-    """
-
-    :param n:
-    :param count:
-    :return:
-    """
-    mean = 0
-    stdev = 1
-
-    samples = np.empty(count)
-    # Generate random numbers for each sample
-    for i in range(count):
-        rv = np.random.normal(mean, stdev, n)
-        rv = rv ** 2
-        samples[i] = np.sum(rv)
-
-    return samples
-
-
-
-
-def plot_results():
-    plt.figure(num=1)
-
-    # simulated probs
-    for n, line_style in zip(range(MIN_N, MAX_N + 1), line_styles):
-        x_vals = simulate(n)
-        x_range = np.linspace(0, 4 * n, 50)
-        sim_prob = ([np.mean(x_vals >= x) for x in x_range])
-        plt.plot(x_range, sim_prob, label=f"Sim Probs ({n=})", color='blue', linestyle=line_style)
-
-    # markov bounds
-    for n, line_style in zip(range(MIN_N, MAX_N + 1), line_styles):
-        x_range = np.linspace(0.000001, 4 * n, 50)
-        x_vals = n / x_range
-        prob = ([np.mean(x_vals >= x) for x in x_range])
-        plt.plot(x_range, prob, label=f"Markov ({n=})", color='red', linestyle=line_style)
-
-    # chebyshev
-    for n, line_style in zip(range(MIN_N, MAX_N + 1), line_styles):
-        x_range = np.linspace(0.000001, 4 * n, 50)
-        x_vals = n / (x_range ** 2)
-        prob = ([np.mean(x_vals >= x) for x in x_range])
-        plt.plot(x_range, prob, label=f"Chebyshev ({n=})", color='Green', linestyle=line_style)
-
-    # TODO Chernoff
-    # TODO Hoeffding (for a few k values)
-
-    # for n, line_style in zip(range(MIN_N, MAX_N + 1), line_styles):
-    #     x_vals = simulate(n)
-    #     x_range = np.linspace(0, 4 * n, 50)
-    #     sim_probs.append([np.mean(x_vals >= x) for x in x_range])
-    #
-    #     markov_bound = markov(x_range, n=None)
-    #     plt.plot(x_range, markov_bound, label=f"Markov ({n=})", color='red', linestyle=line_style)
-
-
-    # for label in ['Chernoff', 'Hoeffding']:
-    #     val = np.random.random(1)
-    #     plt.plot(x_range, [val] * len(x_range), label=f"TODO {label}")
-
-    plt.title('Concentration Inequalities')
-    plt.xlabel('x')
-    plt.ylabel('P(X >= x)')
-    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    plt.grid(True)
-    plt.tight_layout()
-    plt.savefig(plot_fname)
-    plt.show()
-
 def plot_new():
 
-    for n in range(MIN_N, MAX_N + 1):
+    for n in [1, 2, 4, 8]:
         plt.figure()
 
         # Add vertical line at x=n
@@ -157,7 +57,9 @@ def plot_new():
         plt.ylim(0, 20)  # Set maximum y-value
         plt.grid(True)
         plt.tight_layout()
+        plot_fname = os.path.join(plot_dir, f"n_{n}.png")
         plt.savefig(plot_fname)
+        print(f"Plot created: {plot_fname}")
         plt.show()
 
 if __name__ == "__main__":
