@@ -8,18 +8,16 @@ from math import comb               # for n choose i
 import matplotlib.pyplot as plt
 import numpy as np
 
-DEBUG = True
 plt_fname = 'hw5.png'
 
 
 def plot():
-    # VC-dimension for our function
-    d_vc = 2
+    d_vc = 1                        # VC-dimension for our function
 
-    n_values = np.arange(0, 4)
+    n_values = np.arange(0, 20)
 
     # growth function
-    y_growth = 2 ** n_values
+    y_growth = n_values + 1
     plt.plot(n_values, y_growth, label=r'Growth $\Delta_F(n)$', color='green')
 
     # (e * n / d_vc) ** d_vc for each n
@@ -36,7 +34,6 @@ def plot():
     plt.axvline(x=d_vc, color='black', linestyle=':', label=r'$n=d_{vc}$')
 
     plt.xlabel('n')
-    # plt.ylabel('$(\frac{e \cdot n}{d_{VC}})^{d_{VC}}$')
     plt.title(r'Complexity Bounds')
     plt.legend()
     plt.grid(True)
